@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { ProjectMetadata } from './config';
 
 export default function Home() {
   const pageSizes = [
@@ -23,18 +24,21 @@ export default function Home() {
       {/** the logo */}
       <div className="navbar-start">
         <ul className="menu menu-horizontal flex items-center gap-3">
+
+          {/**TBD: And-more Drawer */}
+
           {/** Logo */}
-          <li><a className="btn btn-ghost normal-case text-xl">SheetCheat</a></li>
+          <li><a className="btn btn-ghost normal-case text-xl">{ProjectMetadata.title}</a></li>
 
           {/** Github Badge */}
           <li>
             <a
-              href="https://github.com/neverchanje/sheetcheat"  // Replace with your GitHub repository URL
+              href={ProjectMetadata.githubRepo}  // Replace with your GitHub repository URL
               target="_blank"  // Open the link in a new tab
               rel="noopener noreferrer"  // Recommended for security when using target="_blank"
             >
               <Image
-                src="https://img.shields.io/github/stars/neverchanje/sheetcheat?style=for-the-badge&logo=github&labelColor=%230D597F&color=%230096D6"
+                src={ProjectMetadata.githubRepoBadgeURL}
                 alt="Github Repo Stars"
                 width={100}
                 height={50}
