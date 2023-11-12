@@ -2,15 +2,6 @@ import { ProjectMetadata } from "../config";
 import Image from 'next/image'
 
 export default function NavBar() {
-    const pageSizes = [
-        "Vertical, Unlimited", // the default option
-        "Horizontal, Letter (US), 215.9 x 279.4 mm",
-        "Horizontal, Legal (US), 215.9 x 355.6 mm",
-        "Horizontal, A4, 210 x 297 mm",
-        "Horizontal, A5, 148 x 210 mm"
-    ];
-    const pageSizeOptions = pageSizes.map((size, index) => <option key={index}>{size}</option>);
-
     const exportTypes = [
         "PDF", // the default option
         "HTML",
@@ -51,14 +42,6 @@ export default function NavBar() {
 
             <div className="navbar-end">
                 <ul className="menu menu-horizontal gap-3">
-
-                    {/** Editor Page Size Dropdown */}
-                    <li>
-                        <select className="select" defaultValue={pageSizes[0]}>
-                            {pageSizeOptions}
-                        </select>
-                    </li>
-
                     {/** Export Dropdown */}
                     <li>
                         <select className="select" defaultValue={exportTypes[0]}>

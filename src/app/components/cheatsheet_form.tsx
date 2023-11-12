@@ -2,54 +2,72 @@
 
 import React, { ChangeEvent, useState, FormEvent } from 'react';
 
-const CheatsheetForm = () => {
-    const [title, setTitle] = useState('');
-    const [logoImage, setLogoImage] = useState('');
+interface CheatsheetFormProps {
+    onSubmit: (title: string, logoImage: string) => void
+}
 
-    const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    };
+const orientationOptions = ['Vertical', 'Horizontal'];
 
-    const handleLogoImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setLogoImage(e.target.value);
-    };
+const pageSizes = [
+    "Unlimited", // the default option
+    "Letter (US), 8.5 x 11",
+    "Legal (US), 8.5 x 14",
+    "A4, 8.3 x 11.7",
+    "A5, 5.8 x 8.3"
+];
+const pageSizeOptions = pageSizes.map((size, index) => <option key={index}>{size}</option>);
+
+const CheatsheetForm = (props: CheatsheetFormProps) => {
+    const [orientation, setOrientation] = useState('Vertical');
+    const [pageSize, setPageSize] = useState(pageSizes[0]);
+    const [columnNumber, setColumnNumber] = useState(3);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        // Perform actions when the "Create" button is clicked.
-        // You can access the 'title' and 'logoImage' values here.
-        console.log('Title:', title);
-        console.log('Logo Image:', logoImage);
+    };
+
+    const handleOrientationChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setOrientation(e.target.value);
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text">Title</span>
-                </label>
-                <input
-                    type="text"
-                    className="input input-bordered"
-                    value={title}
-                    onChange={handleTitleChange}
-                    placeholder='Enter the title of your cheatsheet'
-                />
+
+            {/** Select Horizontal or Vertical */}
+            <div className='form-control'>
+                <div className="join join-horizontal space-x-4">
+                    {orientationOptions.map((opt, idx) => <label key={idx} className="label space-x-2 join-item">
+                        <span className="label-text">{opt}</span>
+                        <input
+                            type="radio"
+                            value={opt}
+                            checked={orientation === opt}
+                            onChange={handleOrientationChange}
+                            className="radio-sm text-blue-500"
+                        />
+                    </label>)}
+                </div>
             </div>
 
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text">Logo</span>
+            {/** Editor Page Size Dropdown */}
+            <div className='form-control'>
+                <label className="label space-x-4">
+                    <span className="label-text">Layout</span>
+                    <select className="select select-sm" defaultValue={pageSize} onChange={(e) => setPageSize(e.target.value)}>
+                        {pageSizeOptions}
+                    </select>
                 </label>
-                <input
-                    type="file"
-                    className="file-input file-input-bordered"
-                    value={logoImage}
-                    onChange={handleLogoImageChange}
-                />
+            </div>
 
-                <label className="label">
-                    <span className="label-text-alt">Only accept PNG</span>
+            {/** Column Number.
+             * TODO: If vertical, only 1~3 should be allowed. Horizontal allows 1-5.*/}
+            <div className='form-control'>
+                <label className="label space-x-4">
+                    <span className="label-text">Columns</span>
+                    <select className="select select-sm" defaultValue={columnNumber} onChange={(e) => setColumnNumber(parseInt(e.target.value))}>
+                        {[1, 2, 3, 4, 5].map((num, idx) => <option key={idx}>{num}</option>)}
+                        <option>Unlimited</option>
+                    </select>
                 </label>
             </div>
 
@@ -60,6 +78,10 @@ const CheatsheetForm = () => {
             >
                 Create
             </button>
+
+            <p>
+                {orientation}, {pageSize}, {columnNumber}
+            </p>
         </form>
     );
 };

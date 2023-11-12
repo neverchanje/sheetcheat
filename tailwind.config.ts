@@ -15,6 +15,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("daisyui")],
+  // Make sure you require daisyui AFTER @tailwindcss/typography in tailwind.config.js
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
 };
 export default config;
