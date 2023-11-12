@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import CheatsheetForm from './components/cheatsheet_form';
+import CheatsheetForm, { PageSize, calculatePageSize } from './components/cheatsheet_form';
 import NavBar from './components/navbar';
 import Markdown from 'react-markdown'
 
@@ -40,6 +40,7 @@ interface CheatsheetContent {
 
 export default function Home() {
   const [showCreateForm, setShowCreateForm] = useState(true);
+  const [pageSize, setPageSize] = useState<PageSize>({});
 
   const [content, setContent] = useState<CheatsheetContent>({
     title: '# Arrow',
@@ -75,40 +76,56 @@ R, and supplies an interface with **dplyr** and other familiar R functions.
 
     {/** Form to create a new cheatsheet. Once submitted, it switches to the designer view. */}
     {
-      showCreateForm &&
       <div className='flex justify-center items-center pt-12 lg:pt-24'>
-        <CheatsheetForm onSubmit={(title: string, logoImage: string) => {
+        <CheatsheetForm onSubmit={(args) => {
           setShowCreateForm(false);
+
+          const pageSize = calculatePageSize(args.orientation, args.pageSize);
+          setPageSize(pageSize);
         }} />
       </div>
     }
+    <div>
+      pageSize = {pageSize.height} * {pageSize.width}
+    </div>
 
     {/** Cheatsheet Editor */}
-    <div className='flex m-2 border border-solid border-black'>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 p-6'>
+    <div className='flex justify-center'>
+      <div className='m-2 border border-solid border-black' style={{
+        maxWidth: pageSize.width,
+        maxHeight: pageSize.height,
+        overflow: 'auto',
+      }}>
+        <div className='grid grid-cols-3 p-6 gap-x-10' style={{
+          width: pageSize.width,
+          height: pageSize.height,
+        }}>
+          {/*** CONTENT ***/}
 
-        {/** Cheatsheet Header */}
-        <div className={`prose ${theme.cheatsheetHeaderStyles}`}>
-          <Markdown className={theme.cheatsheetTitleStyles}>{content.title}</Markdown>
-          <Markdown className={theme.cheatsheetDescriptionStyles}>{content.description}</Markdown>
-        </div>
+          {/** Cheatsheet Header */}
+          <div className={`prose ${theme.cheatsheetHeaderStyles}`}>
+            <Markdown className={theme.cheatsheetTitleStyles}>{content.title}</Markdown>
+            <Markdown className={theme.cheatsheetDescriptionStyles}>{content.description}</Markdown>
+          </div>
 
-        {/** Cheatsheet Blocks */}
-        {content.blocks.map((block, blockIdx) => {
-          return <div className={theme.blockStyles} key={blockIdx}>
-            <Markdown className={theme.blockTitleStyles}>{block.title}</Markdown>
-            {block.elements.map((element, elementIdx) => {
-              return <div key={elementIdx}>
-                <Markdown>{element.name}</Markdown>
-                <Markdown>{element.description}</Markdown>
-              </div>
-            })}
-          </div>;
-        })}
-        <div>
+          {/** Cheatsheet Blocks */}
+          {content.blocks.map((block, blockIdx) => {
+            return <div className={theme.blockStyles} key={blockIdx}>
+              <Markdown className={theme.blockTitleStyles}>{block.title}</Markdown>
+              {block.elements.map((element, elementIdx) => {
+                return <div key={elementIdx}>
+                  <Markdown>{element.name}</Markdown>
+                  <Markdown>{element.description}</Markdown>
+                </div>
+              })}
+            </div>;
+          })}
+          <div>
+          </div>
         </div>
 
       </div>
     </div>
+
   </div>
 }

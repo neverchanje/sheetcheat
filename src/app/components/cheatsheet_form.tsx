@@ -2,20 +2,49 @@
 
 import React, { ChangeEvent, useState, FormEvent } from 'react';
 
+interface CreateCheatsheetArgs {
+    orientation: string,
+    pageSize: string,
+    columnNumber: number
+}
+
 interface CheatsheetFormProps {
-    onSubmit: (title: string, logoImage: string) => void
+    onSubmit: (args: CreateCheatsheetArgs) => void
 }
 
 const orientationOptions = ['Vertical', 'Horizontal'];
 
 const pageSizes = [
     "Unlimited", // the default option
-    "Letter (US), 8.5 x 11",
-    "Legal (US), 8.5 x 14",
-    "A4, 8.3 x 11.7",
-    "A5, 5.8 x 8.3"
+    "US Letter",
+    "US Legal",
+    "A4",
+    "A5"
 ];
 const pageSizeOptions = pageSizes.map((size, index) => <option key={index}>{size}</option>);
+
+export interface PageSize {
+    width?: string,
+    height?: string
+}
+
+export function calculatePageSize(orientation: string, pageSize: string): PageSize {
+    // Get current screen dimensions
+    if (pageSize === 'A4') {
+        if (orientation === 'Vertical') {
+            return {
+                width: '210mm',
+                height: '297mm',
+            };
+        } else { // Horizontal
+            return {
+                width: '297mm',
+                height: '210mm',
+            };
+        }
+    }
+    return {}
+}
 
 const CheatsheetForm = (props: CheatsheetFormProps) => {
     const [orientation, setOrientation] = useState('Vertical');
@@ -24,6 +53,8 @@ const CheatsheetForm = (props: CheatsheetFormProps) => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
+
+        props.onSubmit({ orientation, pageSize, columnNumber })
     };
 
     const handleOrientationChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +97,6 @@ const CheatsheetForm = (props: CheatsheetFormProps) => {
                     <span className="label-text">Columns</span>
                     <select className="select select-sm" defaultValue={columnNumber} onChange={(e) => setColumnNumber(parseInt(e.target.value))}>
                         {[1, 2, 3, 4, 5].map((num, idx) => <option key={idx}>{num}</option>)}
-                        <option>Unlimited</option>
                     </select>
                 </label>
             </div>
