@@ -18,10 +18,30 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+.cheatsheet-editor p {
+  font-size: 0.6rem;
+}
+
+.cheatsheet-editor pre {
+  font-size: 0.6rem;
+  line-height: 1.5;
+  background: none;
+  color: black;
+}
+
+.cheatsheet-editor h1 {
+  font-size: 1.5rem;
+}
+
+.cheatsheet-editor h2 {
+  font-size: 1.2rem;
+}
+
+.cheatsheet-editor h3 {
+  font-size: 0.9rem;
 }

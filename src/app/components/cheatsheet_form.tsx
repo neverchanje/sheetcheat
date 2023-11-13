@@ -15,11 +15,10 @@ interface CheatsheetFormProps {
 const orientationOptions = ['Vertical', 'Horizontal'];
 
 const pageSizes = [
-    "Unlimited", // the default option
+    "A4", // the default option
+    "A5",
     "US Letter",
     "US Legal",
-    "A4",
-    "A5"
 ];
 const pageSizeOptions = pageSizes.map((size, index) => <option key={index}>{size}</option>);
 
