@@ -115,4 +115,18 @@ const CheatsheetForm = (props: CheatsheetFormProps) => {
     );
 };
 
+export function cheatsheet() {
+    {/** Form to create a new cheatsheet. Once submitted, it switches to the designer view. */ }
+
+    return <div className='flex justify-center items-center pt-12 lg:pt-24'>
+        <CheatsheetForm onSubmit={(args) => {
+            // setShowCreateForm(false);
+
+            // const pageSize = calculatePageSize(args.orientation, args.pageSize);
+            // setPageSize(pageSize);
+        }} />
+    </div>;
+}
+
+
 export default CheatsheetForm;

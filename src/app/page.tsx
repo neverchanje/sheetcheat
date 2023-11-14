@@ -1,8 +1,5 @@
 'use client'
 
-import { useState } from 'react';
-import CheatsheetForm, { PageSize, calculatePageSize } from './components/cheatsheet_form';
-import NavBar from './components/navbar';
 import Markdown from 'react-markdown'
 import { TwoColumnLayout } from './components/two_column_layout';
 
@@ -32,10 +29,11 @@ interface CheatsheetContent {
 }
 
 export default function Home() {
-  const [showCreateForm, setShowCreateForm] = useState(true);
-  const [pageSize, setPageSize] = useState<PageSize>({});
-
-  const [content, setContent] = useState<CheatsheetContent>({
+  const pageSize = {
+    width: '210mm',
+    height: '297mm',
+  };
+  const content: CheatsheetContent = {
     title: 'FlinkSQL Cheatsheet',
     description: `
 **FlinkSQL** is an SQL engine built on top of **Apache Flink**, enabling standard SQL queries on batch and streaming data.
@@ -93,21 +91,9 @@ WITH (
 \`\`\`
 `},
           {
-            title: 'Create a Protobuf source',
-            description: `
-\`\`\`sql
-WITH (
-'connector' = 'kafka',
-'topic' = 'your_kafka_topic',
-'properties.bootstrap.servers' = 'kafka-broker:9092',
-'format' = 'protobuf',
-'protobuf.class-name' = 'com.yourcompany.YourProtobufMessage'
-);
-\`\`\`
-`},
-          {
             title: 'Create a table with a watermark column',
             description: `
+Watermark marks a specific point in a data stream, ensuring that all events up to that point have been received.
 \`\`\`sql
 CREATE TABLE MyEventTable (
   eventTime TIMESTAMP,
@@ -133,40 +119,20 @@ ALTER TABLE MyEventTable ADD COLUMN newField INT;
             title: 'OVER window clause',
             description: `
 \`\`\`sql
-SELECT
-  orderId,
-  orderDate,
-  orderAmount,
-  SUM(orderAmount) OVER (
-    PARTITION BY customerId
-    ORDER BY orderDate
-    ROWS BETWEEN 3 PRECEDING AND CURRENT ROW
-  ) AS rollingSum
-FROM
-  orders; 
+SELECT orderId, orderDate, orderAmount, SUM(orderAmount) OVER (
+  PARTITION BY customerId ORDER BY orderDate
+  ROWS BETWEEN 3 PRECEDING AND CURRENT ROW
+) AS rollingSum FROM orders; 
 \`\`\`
 `
           }
         ]
       },
     ]
-  });
+  };
 
 
   return <div>
-    <NavBar />
-
-    {/** Form to create a new cheatsheet. Once submitted, it switches to the designer view. */}
-    {showCreateForm &&
-      <div className='flex justify-center items-center pt-12 lg:pt-24'>
-        <CheatsheetForm onSubmit={(args) => {
-          setShowCreateForm(false);
-
-          const pageSize = calculatePageSize(args.orientation, args.pageSize);
-          setPageSize(pageSize);
-        }} />
-      </div>
-    }
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
@@ -203,7 +169,6 @@ FROM
             </div>;
           })}
         </TwoColumnLayout>
-
       </div>
     </div>
 
