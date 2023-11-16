@@ -1,11 +1,15 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TwoColumnLayout } from "./components/two_column_layout";
 import { parseMarkdownToSheet } from "./utils/markdown_parser";
 import Markdown from 'react-markdown'
+import NavBar from "./components/navbar";
+import { exportComponentAsPNG } from "react-component-export-image";
 
 export default function Home() {
+  const sheetRef = useRef<HTMLDivElement>(null);
+
   const pageSize = {
     width: '210mm',
     height: '297mm',
@@ -32,11 +36,23 @@ export default function Home() {
   sheet.validate();
 
   return <div>
+    <NavBar
+      exportToPNG={() => {
+        if (typeof window !== "undefined") {
+          exportComponentAsPNG(sheetRef, {
+            fileName: 'cheatsheet.png',
+            html2CanvasOptions: {
+              backgroundColor: null,
+              removeContainer: true
+            },
+          })
+        }
+      }} />
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
     <div className='flex justify-center'>
-      <div className='m-2 border border-solid border-black' style={{
+      <div className='m-2 border border-solid border-black' ref={sheetRef} style={{
         maxWidth: pageSize.width,
         maxHeight: pageSize.height,
         overflow: 'auto',

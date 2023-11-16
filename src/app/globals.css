@@ -4,6 +4,7 @@
 
 .cheatsheet-editor p {
   font-size: 0.6rem;
+  margin-bottom: 0.1rem;
 }
 
 .cheatsheet-editor pre {
@@ -11,6 +12,8 @@
   line-height: 1.5;
   background: none;
   color: black;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .cheatsheet-editor h1 {
