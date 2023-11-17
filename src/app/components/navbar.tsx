@@ -1,8 +1,11 @@
 import { ProjectMetadata } from "@/config";
 import Image from 'next/image'
+import { RefObject } from "react";
+import { exportComponentAsPNG } from "react-component-export-image";
 
 export default function NavBar(props: {
-    exportToPNG: () => void
+    // The ref of the cheatsheet to export.
+    sheetRef: RefObject<HTMLDivElement>,
 }) {
     return (
         <div className="navbar">
@@ -26,7 +29,15 @@ export default function NavBar(props: {
             </div>
 
             <div className="navbar-end gap-3">
-                <button className="btn btn-ghost normal-case" onClick={props.exportToPNG}>
+                <button className="btn btn-ghost normal-case" onClick={() => {
+                    exportComponentAsPNG(props.sheetRef, {
+                        fileName: 'cheatsheet.png',
+                        html2CanvasOptions: {
+                            backgroundColor: null,
+                            removeContainer: true
+                        },
+                    })
+                }}>
                     Export to PNG
                 </button>
             </div>

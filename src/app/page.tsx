@@ -4,8 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
 import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
-import NavBar from "@/components/navbar";
-import { exportComponentAsPNG } from "react-component-export-image";
+import dynamic from "next/dynamic";
+
+// Dynamically import the 'NavBar' function without server-side rendering
+const NavBar = dynamic(
+  () => import('@/components/navbar'),
+  { ssr: false }
+);
 
 export default function Home() {
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -36,18 +41,7 @@ export default function Home() {
   sheet.validate();
 
   return <div>
-    <NavBar
-      exportToPNG={() => {
-        if (typeof window !== "undefined") {
-          exportComponentAsPNG(sheetRef, {
-            fileName: 'cheatsheet.png',
-            html2CanvasOptions: {
-              backgroundColor: null,
-              removeContainer: true
-            },
-          })
-        }
-      }} />
+    <NavBar sheetRef={sheetRef} />
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
