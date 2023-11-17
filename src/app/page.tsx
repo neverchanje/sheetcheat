@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { TwoColumnLayout } from "./components/two_column_layout";
-import { parseMarkdownToSheet } from "./utils/markdown_parser";
+import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
+import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
-import NavBar from "./components/navbar";
+import NavBar from "@/components/navbar";
 import { exportComponentAsPNG } from "react-component-export-image";
 
 export default function Home() {
@@ -58,21 +58,21 @@ export default function Home() {
         overflow: 'auto',
       }}>
         {/*** INNER FRAME ***/}
-        <TwoColumnLayout className='cheatsheet-editor p-6 gap-x-6' style={{
+        <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' style={{
           width: pageSize.width,
           height: pageSize.height,
         }}>
           {/*** CONTENT ***/}
 
           {/** Cheatsheet Header */}
-          <div className="column-1 pb-4">
+          <Block className="pb-4" columnIndex={1}>
             <div className="pb-4 prose"><h1>{sheet.title.trim()}</h1></div>
             <Markdown className="prose">{sheet.markdown.trim()}</Markdown>
-          </div>
+          </Block>
 
           {/** Cheatsheet Blocks */}
           {sheet.blocks.map((block, blockIdx) => {
-            return <div key={blockIdx} className={`pb-2 column-${block.columnIndex}`}>
+            return <Block key={blockIdx} className='pb-2' columnIndex={block.columnIndex}>
               <div className="prose pb-2"><h2>{block.title.trim()}</h2></div>
               {block.elements.map((element, elementIdx) => {
                 {/** Cheatsheet Elements */ }
@@ -81,9 +81,9 @@ export default function Home() {
                   <Markdown className="prose prose-sm">{element.markdown.trim()}</Markdown>
                 </div>
               })}
-            </div>;
+            </Block>;
           })}
-        </TwoColumnLayout>
+        </MultiColumnLayout>
       </div>
     </div>
 

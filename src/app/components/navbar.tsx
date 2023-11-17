@@ -1,7 +1,9 @@
 import { ProjectMetadata } from "@/config";
 import Image from 'next/image'
 
-export default function NavBar(props: { exportToPNG: () => void }) {
+export default function NavBar(props: {
+    exportToPNG: () => void
+}) {
     return (
         <div className="navbar">
             {/** the logo */}

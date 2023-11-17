@@ -19,9 +19,9 @@ export class Block {
     elements: Element[];
     /// The column index of the block.
     /// If there are 3 columns, the index should range from 1 to 3.
-    columnIndex?: number;
+    columnIndex: number;
 
-    constructor(title: string, columnIndex?: number) {
+    constructor(title: string, columnIndex: number) {
         this.title = title;
         this.columnIndex = columnIndex;
         this.elements = [];
@@ -80,14 +80,6 @@ function parseAttributes(markdown: string): Array<{ key: string, value: string }
     return attributes;
 }
 
-function removeAttributes(text: string): string {
-    // Regex pattern to match text enclosed in {}
-    const pattern = /{[^}]*}/g;
-
-    // Replace all occurrences of the pattern with an empty string
-    return text.replace(pattern, '');
-}
-
 export function parseMarkdownToSheet(markdown: string): Sheet {
     const tokens = marked.lexer(markdown);
     let currentBlock: Block | null = null;
@@ -104,7 +96,7 @@ export function parseMarkdownToSheet(markdown: string): Sheet {
                     if (!sheet) {
                         throw new Error('Should specify a sheet title first');
                     }
-                    currentBlock = new Block(token.text);
+                    currentBlock = new Block(token.text, 1);
                     sheet.addBlock(currentBlock);
                     currentElement = null;
                     break;
@@ -119,7 +111,6 @@ export function parseMarkdownToSheet(markdown: string): Sheet {
         } else {
             if (currentElement) {
                 currentElement.markdown += token.raw;
-                console.log(token.raw)
             } else if (currentBlock) {
                 // Check for column index
                 const attributes = parseAttributes(token.raw);
