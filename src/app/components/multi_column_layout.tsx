@@ -58,17 +58,26 @@ export const MultiColumnLayout: React.FC<{
     style?: CSSProperties,
     columnNumber: number
 }> = ({ children, className, style, columnNumber }) => {
-    if (columnNumber < 1 || columnNumber > 12) {
-        // tailwind supports at maximum 12 columns.
-        throw new Error("Invalid column number: " + columnNumber)
+    if (columnNumber < 1 || columnNumber > 5) {
+        throw new Error(`Invalid column number: ${columnNumber} `)
     }
 
     let flatChildren = flattenChildren(children);
     let splittedChildren = splitChildren(flatChildren, columnNumber);
     assert(splittedChildren.length === columnNumber);
 
+    const gridColumnClasses: { [key: number]: string } = {
+        2: "grid-cols-2",
+        3: "grid-cols-3",
+        4: "grid-cols-4",
+        5: "grid-cols-5"
+    };
+    // Use the mapping to get the class name based on columnNumber.
+    // `grid-cols-${columnNumber}` somehow does not work in this case.
+    const gridColsClass = gridColumnClasses[columnNumber] || "";
+
     return (
-        <div className={`grid grid-cols-${columnNumber} ${className}`} style={style}>
+        <div className={`grid ${gridColsClass} ${className}`} style={style}>
             {splittedChildren.map((e, index) => <div key={index}>{e}</div>)}
         </div>
     );
