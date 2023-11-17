@@ -5,6 +5,7 @@ import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
 import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
 import dynamic from "next/dynamic";
+import Config, { getPageSize } from "@/config";
 
 // Dynamically import the 'NavBar' function without server-side rendering
 const NavBar = dynamic(
@@ -15,11 +16,7 @@ const NavBar = dynamic(
 export default function Home() {
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const pageSize = {
-    width: '210mm',
-    height: '297mm',
-  };
-
+  const [pageSize, setPageSize] = useState(Config.pageSizes.A4);
   const [fileContent, setFileContent] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,7 +38,9 @@ export default function Home() {
   sheet.validate();
 
   return <div>
-    <NavBar sheetRef={sheetRef} />
+    <NavBar
+      sheetRef={sheetRef}
+      setPageSize={(ps) => { setPageSize(getPageSize(ps)); }} />
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
