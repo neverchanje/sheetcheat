@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
 import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
-import { PageSizeStates } from "@/config";
+import { PageSize, PageSizeStates as PageSizeConfig } from "@/config";
 import dynamic from "next/dynamic";
 
 // Dynamically import the 'NavBar' function without server-side rendering
@@ -13,16 +13,17 @@ const NavBar = dynamic(
   { ssr: false }
 );
 
-export default function Home() {
+function Home() {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const [fileContent, setFileContent] = useState<string | null>(null);
-  const [pageSizeStates, setPageSizeStates] = useState<PageSizeStates>(new PageSizeStates());
+  const pageSizeCfg = useMemo(() => new PageSizeConfig(), []);
+  const [pageSize, setPageSize] = useState<PageSize>(pageSizeCfg.determinePageSize());
 
   // Effect to update localStorage when state changes
   useEffect(() => {
-    pageSizeStates.saveToLocal()
-  }, [pageSizeStates]);
+    pageSizeCfg.saveToLocal()
+  }, [pageSizeCfg, pageSizeCfg.layoutType, pageSizeCfg.pageSizeType]);
 
   useEffect(() => {
     const filePath = '/examples/flink.md';
@@ -46,12 +47,12 @@ export default function Home() {
     <NavBar
       sheetRef={sheetRef}
       setPageSizeType={(t) => {
-        pageSizeStates.updatePageSizeType(t);
-        setPageSizeStates(pageSizeStates);
+        pageSizeCfg.updatePageSizeType(t);
+        setPageSize(pageSizeCfg.determinePageSize());
       }}
       setLayoutType={(t) => {
-        pageSizeStates.updateLayoutType(t);
-        setPageSizeStates(pageSizeStates);
+        pageSizeCfg.updateLayoutType(t);
+        setPageSize(pageSizeCfg.determinePageSize());
       }}
     />
 
@@ -59,14 +60,14 @@ export default function Home() {
     {/** OUTER FRAME */}
     <div className='flex justify-center'>
       <div className='m-2 border border-solid border-black' ref={sheetRef} style={{
-        maxWidth: pageSizeStates.pageSize.width,
-        maxHeight: pageSizeStates.pageSize.height,
+        maxWidth: pageSize.width,
+        maxHeight: pageSize.height,
         overflow: 'auto',
       }}>
         {/*** INNER FRAME ***/}
         <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' style={{
-          width: pageSizeStates.pageSize.width,
-          height: pageSizeStates.pageSize.height,
+          width: pageSize.width,
+          height: pageSize.height,
         }}>
           {/*** CONTENT ***/}
 
@@ -96,9 +97,4 @@ export default function Home() {
   </div>
 }
 
-export async function getServerSideProps() {
-  // No server-side data fetching
-  return {
-    props: {}, // will be passed to the page component as props
-  };
-}
+export default Home;

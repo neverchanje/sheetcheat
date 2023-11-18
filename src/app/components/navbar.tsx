@@ -1,4 +1,4 @@
-import { LayoutType, PageSizeType, ProjectMetadata, defaultLayoutType, defaultPageSizeType } from '@/config';
+import { LayoutType, PageSizeType, ProjectMetadata, initLayoutType, initPageSizeType } from '@/config';
 import Image from 'next/image'
 import { RefObject } from "react";
 import { exportComponentAsPNG } from "react-component-export-image";
@@ -33,7 +33,7 @@ export default function NavBar(props: {
             <div className="navbar-center gap-4">
                 <div className="tooltip tooltip-bottom" data-tip="Page Size">
                     <select
-                        defaultValue={defaultPageSizeType()}
+                        defaultValue={initPageSizeType()}
                         className="select select-sm select-bordered"
                         onChange={(e) => { props.setPageSizeType(e.target.value); }}
                     >
@@ -44,7 +44,7 @@ export default function NavBar(props: {
                 </div>
                 <div className="tooltip tooltip-bottom" data-tip="Layout">
                     <select
-                        defaultValue={defaultLayoutType()}
+                        defaultValue={initLayoutType()}
                         className="select select-sm select-bordered"
                         onChange={(e) => { props.setLayoutType(e.target.value); }}
                     >

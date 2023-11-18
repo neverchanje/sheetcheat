@@ -20,12 +20,10 @@ export enum PageSizeType {
 export class PageSizeStates {
     layoutType: LayoutType;
     pageSizeType: PageSizeType;
-    pageSize: PageSize;
 
     constructor() {
         this.layoutType = initLayoutType();
         this.pageSizeType = initPageSizeType();
-        this.pageSize = determinePageSize(this.pageSizeType, this.layoutType);
     }
 
     saveToLocal() {
@@ -36,35 +34,32 @@ export class PageSizeStates {
     updatePageSizeType(t: string) {
         const newPageSizeType = toPageSizeType(t);
         this.pageSizeType = newPageSizeType;
-        this.pageSize = determinePageSize(newPageSizeType, this.layoutType);
     }
 
     updateLayoutType(t: string) {
         const newLayoutType = toLayoutType(t);
         this.layoutType = newLayoutType;
-        this.pageSize = determinePageSize(this.pageSizeType, newLayoutType);
+    }
+
+    determinePageSize(): PageSize {
+        const pageSize = pageSizeMap[this.pageSizeType];
+        switch (this.layoutType) {
+            case LayoutType.Portrait:
+                return pageSize
+            case LayoutType.Landscape:
+                return { width: pageSize.height, height: pageSize.width }
+        }
     }
 }
 
-
-function initPageSizeType(): PageSizeType {
+export function initPageSizeType(): PageSizeType {
     const t = localStorage.getItem('pageSizeType');
     return t ? toPageSizeType(t) : defaultPageSizeType();
 }
 
-function initLayoutType(): LayoutType {
+export function initLayoutType(): LayoutType {
     const t = localStorage.getItem('layoutType');
     return t ? toLayoutType(t) : defaultLayoutType();
-}
-
-function determinePageSize(pageSizeType: PageSizeType, layout: LayoutType): PageSize {
-    const pageSize = pageSizeMap[pageSizeType];
-    switch (layout) {
-        case LayoutType.Portrait:
-            return pageSize
-        case LayoutType.Landscape:
-            return { width: pageSize.height, height: pageSize.width }
-    }
 }
 
 const pageSizeMap: { [key in PageSizeType]: PageSize } = {
@@ -94,5 +89,5 @@ export function toLayoutType(value: string): LayoutType {
     throw new Error(`Invalid LayoutType: ${value}`);
 }
 
-export function defaultLayoutType(): LayoutType { return LayoutType.Portrait }
-export function defaultPageSizeType(): PageSizeType { return PageSizeType.A4 }
+function defaultLayoutType(): LayoutType { return LayoutType.Portrait }
+function defaultPageSizeType(): PageSizeType { return PageSizeType.A4 }
