@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
 import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
+import { PageSizeStates } from "@/config";
 import dynamic from "next/dynamic";
-import Config, { getPageSize } from "@/config";
 
 // Dynamically import the 'NavBar' function without server-side rendering
 const NavBar = dynamic(
@@ -16,8 +16,13 @@ const NavBar = dynamic(
 export default function Home() {
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const [pageSize, setPageSize] = useState(Config.pageSizes.A4);
   const [fileContent, setFileContent] = useState<string | null>(null);
+  const [pageSizeStates, setPageSizeStates] = useState<PageSizeStates>(new PageSizeStates());
+
+  // Effect to update localStorage when state changes
+  useEffect(() => {
+    pageSizeStates.saveToLocal()
+  }, [pageSizeStates]);
 
   useEffect(() => {
     const filePath = '/examples/flink.md';
@@ -40,20 +45,28 @@ export default function Home() {
   return <div>
     <NavBar
       sheetRef={sheetRef}
-      setPageSize={(ps) => { setPageSize(getPageSize(ps)); }} />
+      setPageSizeType={(t) => {
+        pageSizeStates.updatePageSizeType(t);
+        setPageSizeStates(pageSizeStates);
+      }}
+      setLayoutType={(t) => {
+        pageSizeStates.updateLayoutType(t);
+        setPageSizeStates(pageSizeStates);
+      }}
+    />
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
     <div className='flex justify-center'>
       <div className='m-2 border border-solid border-black' ref={sheetRef} style={{
-        maxWidth: pageSize.width,
-        maxHeight: pageSize.height,
+        maxWidth: pageSizeStates.pageSize.width,
+        maxHeight: pageSizeStates.pageSize.height,
         overflow: 'auto',
       }}>
         {/*** INNER FRAME ***/}
         <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' style={{
-          width: pageSize.width,
-          height: pageSize.height,
+          width: pageSizeStates.pageSize.width,
+          height: pageSizeStates.pageSize.height,
         }}>
           {/*** CONTENT ***/}
 
@@ -81,4 +94,11 @@ export default function Home() {
     </div>
 
   </div>
+}
+
+export async function getServerSideProps() {
+  // No server-side data fetching
+  return {
+    props: {}, // will be passed to the page component as props
+  };
 }
