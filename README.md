@@ -3,6 +3,10 @@
 
 Sheetcheat is a web-based tool that empowers you to effortlessly design and generate printable cheat sheets in Markdown format, eliminating the need for complex design software like Adobe InDesign or Canva. With Sheetcheat, you can focus on creating content while letting the tool handle the layout and formatting.
 
+**Note: Active Development**
+
+Please note that Sheetcheat is currently in an active development phase, and the fully usable product will soon be available. For more details on the project's progress, you can [review the roadmap issue](https://github.com/neverchanje/sheetcheat/issues/1).
+
 ## Key Features
 
 - No Installation Required: Sheetcheat is entirely web-based, which means you can access it directly from your web browser. No need to install any software or plugins.
