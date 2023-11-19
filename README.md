@@ -1,7 +1,7 @@
 
 # Sheetcheat: Create Beautiful Printable Cheat Sheets in Markdown
 
-Sheetcheat is a web-based tool that empowers you to effortlessly design and generate printable cheat sheets in Markdown format, eliminating the need for complex design software like Adobe InDesign or Canva. With Sheetcheat, you can focus on creating content while letting the tool handle the layout and formatting.
+Sheetcheat is a web-based tool that empowers you to effortlessly design and generate printable cheat sheets in Markdown format, eliminating the need for complex design software like [Adobe InDesign](https://www.adobe.com/products/indesign.html) or [Canva](https://www.canva.com/). With Sheetcheat, you can focus on creating content while letting the tool handle the layout and formatting.
 
 **Note: Active Development**
 

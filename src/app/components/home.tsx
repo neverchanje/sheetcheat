@@ -6,6 +6,7 @@ import { parseMarkdownToSheet } from "@/utils/markdown_parser";
 import Markdown from 'react-markdown'
 import { PageSize, PageSizeStates as PageSizeConfig } from "@/config";
 import dynamic from "next/dynamic";
+import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 
 // Dynamically import the 'NavBar' function without server-side rendering
 const NavBar = dynamic(
@@ -14,6 +15,7 @@ const NavBar = dynamic(
 );
 
 function Home() {
+  // The sheetRef will be used to export to PNG.
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const [fileContent, setFileContent] = useState<string | null>(null);
@@ -43,6 +45,34 @@ function Home() {
   const sheet = parseMarkdownToSheet(fileContent);
   sheet.validate();
 
+  const innerSheet = (
+    <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' >
+      {/*** CONTENT ***/}
+
+      {/** Cheatsheet Header */}
+      <Block className="pb-4" columnIndex={1}>
+        <div className="pb-4 prose"><h1>{sheet.title.trim()}</h1></div>
+        <Markdown className="prose">{sheet.markdown.trim()}</Markdown>
+      </Block>
+
+      {/** Cheatsheet Blocks */}
+      {
+        sheet.blocks.map((block, blockIdx) => {
+          return <Block key={blockIdx} className='pb-2' columnIndex={block.columnIndex}>
+            <div className="prose pb-2"><h2>{block.title.trim()}</h2></div>
+            {block.elements.map((element, elementIdx) => {
+              {/** Cheatsheet Elements */ }
+              return <div key={elementIdx} className='pb-2'>
+                <div className="prose pb-1"><h3>{element.title.trim()}</h3></div>
+                <Markdown className="prose prose-sm">{element.markdown.trim()}</Markdown>
+              </div>
+            })}
+          </Block>;
+        })
+      }
+    </MultiColumnLayout>
+  );
+
   return <div>
     <NavBar
       sheetRef={sheetRef}
@@ -59,41 +89,23 @@ function Home() {
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
     <div className='flex justify-center'>
-      <div className='m-2 border border-solid border-black' ref={sheetRef} style={{
-        maxWidth: pageSize.width,
-        maxHeight: pageSize.height,
-        overflow: 'auto',
+
+      <QuickPinchZoom onUpdate={({ x, y, scale }) => {
+        if (sheetRef.current) {
+          sheetRef.current.style.transform = make3dTransformValue({ x, y, scale });
+        }
       }}>
-        {/*** INNER FRAME ***/}
-        <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' style={{
+        <div className='border border-solid border-black shadow-lg' ref={sheetRef} style={{
           width: pageSize.width,
           height: pageSize.height,
+          minWidth: pageSize.width,
+          minHeight: pageSize.height,
+          overflow: 'hidden',
         }}>
-          {/*** CONTENT ***/}
-
-          {/** Cheatsheet Header */}
-          <Block className="pb-4" columnIndex={1}>
-            <div className="pb-4 prose"><h1>{sheet.title.trim()}</h1></div>
-            <Markdown className="prose">{sheet.markdown.trim()}</Markdown>
-          </Block>
-
-          {/** Cheatsheet Blocks */}
-          {sheet.blocks.map((block, blockIdx) => {
-            return <Block key={blockIdx} className='pb-2' columnIndex={block.columnIndex}>
-              <div className="prose pb-2"><h2>{block.title.trim()}</h2></div>
-              {block.elements.map((element, elementIdx) => {
-                {/** Cheatsheet Elements */ }
-                return <div key={elementIdx} className='pb-2'>
-                  <div className="prose pb-1"><h3>{element.title.trim()}</h3></div>
-                  <Markdown className="prose prose-sm">{element.markdown.trim()}</Markdown>
-                </div>
-              })}
-            </Block>;
-          })}
-        </MultiColumnLayout>
-      </div>
+          {innerSheet}
+        </div>
+      </QuickPinchZoom>
     </div>
-
   </div>
 }
 
