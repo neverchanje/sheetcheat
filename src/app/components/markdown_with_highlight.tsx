@@ -8,6 +8,7 @@ function MarkdownWithHighlight(props: {
     children: string | null | undefined
 }) {
     a11yLight.hljs.padding = 0;
+    a11yLight.hljs.backgroundColor = 'rgba(0, 0, 0, 0)'; // fully transparent
     return (
         <Markdown
             className={props.className}
