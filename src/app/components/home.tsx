@@ -7,6 +7,7 @@ import Markdown from 'react-markdown'
 import { PageSize, PageSizeStates as PageSizeConfig } from "@/config";
 import dynamic from "next/dynamic";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
+import MarkdownWithHighlight from "./markdown_with_highlight";
 
 // Dynamically import the 'NavBar' function without server-side rendering
 const NavBar = dynamic(
@@ -52,7 +53,7 @@ function Home() {
       {/** Cheatsheet Header */}
       <Block className="pb-4" columnIndex={1}>
         <div className="pb-4 prose"><h1>{sheet.title.trim()}</h1></div>
-        <Markdown className="prose">{sheet.markdown.trim()}</Markdown>
+        <MarkdownWithHighlight className="prose">{sheet.markdown.trim()}</MarkdownWithHighlight>
       </Block>
 
       {/** Cheatsheet Blocks */}
@@ -64,7 +65,7 @@ function Home() {
               {/** Cheatsheet Elements */ }
               return <div key={elementIdx} className='pb-2'>
                 <div className="prose pb-1"><h3>{element.title.trim()}</h3></div>
-                <Markdown className="prose prose-sm">{element.markdown.trim()}</Markdown>
+                <MarkdownWithHighlight className="prose prose-sm">{element.markdown.trim()}</MarkdownWithHighlight>
               </div>
             })}
           </Block>;
@@ -105,6 +106,7 @@ function Home() {
           {innerSheet}
         </div>
       </QuickPinchZoom>
+
     </div>
   </div>
 }
