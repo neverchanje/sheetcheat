@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
 import { parseMarkdownToSheet } from "@/utils/markdown_parser";
-import Markdown from 'react-markdown'
 import { PageSize, PageSizeStates as PageSizeConfig } from "@/config";
 import dynamic from "next/dynamic";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
