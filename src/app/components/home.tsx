@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiColumnLayout, Block } from "@/components/multi_column_layout";
-import { parseMarkdownToSheet } from "@/utils/markdown_parser";
+import { Sheet, parseMarkdownToSheet } from "@/utils/markdown_parser";
 import { PageSize, PageSizeStates as PageSizeConfig } from "@/config";
 import dynamic from "next/dynamic";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
@@ -18,7 +18,7 @@ function Home() {
   // The sheetRef will be used to export to PNG.
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const [fileContent, setFileContent] = useState<string | null>(null);
+  const [markdown, setMarkdown] = useState('');
   const pageSizeCfg = useMemo(() => new PageSizeConfig(), []);
   const [pageSize, setPageSize] = useState<PageSize>(pageSizeCfg.determinePageSize());
 
@@ -27,23 +27,35 @@ function Home() {
     pageSizeCfg.saveToLocal()
   }, [pageSizeCfg, pageSizeCfg.layoutType, pageSizeCfg.pageSizeType]);
 
-  useEffect(() => {
-    const filePath = '/examples/flink.md';
-    fetch(filePath)
-      .then((response) => response.text())
-      .then((data) => {
-        setFileContent(data);
-      })
-      .catch((error) => {
-        console.error('Error loading file:', error);
-      });
-  }, []);
+  const navbar = (
+    <NavBar
+      sheetRef={sheetRef}
+      setPageSizeType={(t) => {
+        pageSizeCfg.updatePageSizeType(t);
+        setPageSize(pageSizeCfg.determinePageSize());
+      }}
+      setLayoutType={(t) => {
+        pageSizeCfg.updateLayoutType(t);
+        setPageSize(pageSizeCfg.determinePageSize());
+      }}
+      setMarkdown={setMarkdown}
+    />
+  );
 
-  if (!fileContent) {
-    return <></>
+  if (!markdown) {
+    return <div>{navbar}</div>
   }
-  const sheet = parseMarkdownToSheet(fileContent);
-  sheet.validate();
+
+  let sheet: Sheet;
+  try {
+    sheet = parseMarkdownToSheet(markdown);
+    sheet.validate();
+  } catch (e) {
+    alert(e);
+    return (
+      <div>{navbar}</div>
+    )
+  }
 
   const innerSheet = (
     <MultiColumnLayout columnNumber={2} className='cheatsheet-editor p-6 gap-x-6' >
@@ -74,17 +86,7 @@ function Home() {
   );
 
   return <div>
-    <NavBar
-      sheetRef={sheetRef}
-      setPageSizeType={(t) => {
-        pageSizeCfg.updatePageSizeType(t);
-        setPageSize(pageSizeCfg.determinePageSize());
-      }}
-      setLayoutType={(t) => {
-        pageSizeCfg.updateLayoutType(t);
-        setPageSize(pageSizeCfg.determinePageSize());
-      }}
-    />
+    {navbar}
 
     {/** Cheatsheet Editor */}
     {/** OUTER FRAME */}
